@@ -2,10 +2,10 @@ import streamlit as st
 import subprocess
 import openai
 
- # 输入 OpenAI API 密钥
-    api_key = st.text_input("Enter OpenAI API Key")
-    if not api_key:
-        st.warning("Please enter your OpenAI API Key")
+# 输入 OpenAI API 密钥
+api_key = st.text_input("Enter OpenAI API Key")
+if not api_key:
+    st.warning("Please enter your OpenAI API Key")
 
 # 设置 OpenAI API 密钥
 openai.api_key = api_key
