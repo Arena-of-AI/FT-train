@@ -21,6 +21,7 @@ terminal_output = st.text_area("终端输出", value="", height=200)
 
 # 定义一个函数，用于将终端输出添加到文本区域中
 def append_to_terminal_output(text):
+    global terminal_output  # 声明为全局变量
     terminal_output += text
     st.text_area("终端输出", value=terminal_output, height=200)
 
