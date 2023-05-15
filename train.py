@@ -17,19 +17,21 @@ if base_model == "自定义":
     base_model = st.sidebar.text_input("请输入自定义的 base model")
 
 # 创建一个文本区域用于显示终端输出
-terminal_output = st.text_area("终端输出", value="", height=200)
+terminal_output = st.empty()
 
-# 定义一个函数，用于将终端输出添加到文本区域中
-def append_to_terminal_output(text):
-    global terminal_output  # 声明为全局变量
-    terminal_output += text
-    st.text_area("终端输出", value=terminal_output, height=200)
+# 定义一个缓冲区，用于保存终端输出
+output_buffer = []
 
-# 让用户上传训练文件
-train_file = st.file_uploader("上传训练文件", type="jsonl")
+# 定义一个函数，将终端输出追加到缓冲区中
+def append_to_output_buffer(text):
+    output_buffer.append(text)
 
 # 当用户点击“开始训练”按钮时触发的事件
 if st.button("开始训练"):
+    # 清空缓冲区和文本区域
+    output_buffer.clear()
+    terminal_output.markdown("")
+    
     if train_file is not None:
         # 保存训练文件到本地
         with open("train.jsonl", "wb") as f:
@@ -49,10 +51,13 @@ if st.button("开始训练"):
         # 执行命令并逐行读取输出
         process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
         for line in process.stdout:
-            append_to_terminal_output(line)
+            append_to_output_buffer(line)
 
         # 等待命令执行完成
         process.wait()
 
-        # 显示终端输出的文本
-        append_to_terminal_output("命令执行完成。退出码：" + str(process.returncode))
+        # 将缓冲区中的终端输出追加到文本区域中
+        terminal_output.markdown("\n".join(output_buffer))
+        
+        # 显示完成的消息
+        st.success("命令执行完成。退出码：" + str(process.returncode))
