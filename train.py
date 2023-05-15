@@ -1,20 +1,26 @@
 import streamlit as st
 import subprocess
-import openai
+import json
 
 # 输入 OpenAI API 密钥
 api_key = st.text_input("Enter OpenAI API Key")
 if not api_key:
     st.warning("Please enter your OpenAI API Key")
 
-# 设置 OpenAI API 密钥
-openai.api_key = api_key
-
 # 获取以前的模型列表
-models = openai.FineTune.list()
+command = ["openai", "api", "fine_tunes.list"]
+process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+stdout, stderr = process.communicate()
+
+# 解析命令输出
+if stderr:
+    st.error(stderr.decode())
+    models = []
+else:
+    models = json.loads(stdout.decode())
 
 # 提取模型名称列表
-model_names = [model["display_name"] for model in models["data"]]
+model_names = [model["display_name"] for model in models]
 
 # 添加系统默认模型
 model_names.append("System Default")
