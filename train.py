@@ -2,12 +2,10 @@ import streamlit as st
 import subprocess
 import openai
 
-# 让用户输入 API 密钥
-api_key = st.text_input("请输入您的 OpenAI API 密钥")
-
-# 检查API密钥的格式是否正确
-if not api_key.startswith("sk"):
-    st.error("API密钥格式不正确")
+ # 输入 OpenAI API 密钥
+    api_key = st.text_input("Enter OpenAI API Key")
+    if not api_key:
+        st.warning("Please enter your OpenAI API Key")
 
 # 设置 OpenAI API 密钥
 openai.api_key = api_key
