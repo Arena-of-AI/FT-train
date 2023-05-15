@@ -5,7 +5,7 @@ import subprocess
 api_key = st.text_input("请输入您的 OpenAI API 密钥")
 
 # 检查 API 密钥的格式是否正确
-if not api_key.startswith("YOUR_OPENAI_API_KEY_PREFIX"):
+if not api_key.startswith("sk-"):
     st.error("API 密钥格式不正确")
 
 # 创建一个文本区域用于显示终端输出
