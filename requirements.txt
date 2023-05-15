@@ -1,3 +1,6 @@
 streamlit
-jsonlines
 openai
+pandas
+gspread
+openpyxl
+pexpect
