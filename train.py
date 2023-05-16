@@ -16,16 +16,6 @@ base_model = st.selectbox("选择要使用的 base model", base_model_options)
 if base_model == "自定义":
     base_model = st.text_input("请输入自定义的 base model")
 
-# 创建一个文本区域用于显示终端输出
-terminal_output = st.empty()
-
-# 定义一个缓冲区，用于保存终端输出
-output_buffer = []
-
-# 定义一个函数，将终端输出追加到缓冲区中
-def append_to_output_buffer(text):
-    output_buffer.append(text)
-
 # 让用户上传训练文件
 uploaded_file = st.file_uploader("上传训练文件", type="jsonl")
 
@@ -39,6 +29,8 @@ if st.button("开始训练"):
         # 使用 CLI 指令训练模型
         command = [
             "openai",
+            "--api-key",
+            api_key,
             "api",
             "fine_tunes.create",
             "-t",
@@ -49,14 +41,13 @@ if st.button("开始训练"):
 
         # 执行命令并逐行读取输出
         process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
+        output_text = ""
         for line in process.stdout:
-            append_to_output_buffer(line)
+            output_text += line + "\n"
 
         # 等待命令执行完成
         process.wait()
 
-        # 将缓冲区中的终端输出追加到文本区域中
-        terminal_output.markdown("\n".join(output_buffer))
-        
-        # 显示完成的消息
-        st.success("命令执行完成。退出码：" + str(process.returncode))
+        # 显示终端输出的文本
+        st.text("命令执行完成。退出码：" + str(process.returncode))
+        st.text_area("终端输出", value=output_text, height=200)
