@@ -8,13 +8,23 @@ api_key = st.text_input("请输入您的 OpenAI API 密钥")
 if not api_key.startswith("sk-"):
     st.error("API 密钥格式不正确")
 
-# 创建一个侧边栏，供用户选择 base model
+# 创建一个下拉选择框，供用户选择 base model
 base_model_options = ["ada", "babbage", "curie", "davinci", "自定义"]
-base_model = st.sidebar.selectbox("选择要使用的 base model", base_model_options)
+base_model = st.selectbox("选择要使用的 base model", base_model_options)
 
 # 如果用户选择自定义，让用户输入 base model
 if base_model == "自定义":
-    base_model = st.sidebar.text_input("请输入自定义的 base model")
+    base_model = st.text_input("请输入自定义的 base model")
+
+# 创建一个文本区域用于显示终端输出
+terminal_output = st.empty()
+
+# 定义一个缓冲区，用于保存终端输出
+output_buffer = []
+
+# 定义一个函数，将终端输出追加到缓冲区中
+def append_to_output_buffer(text):
+    output_buffer.append(text)
 
 # 让用户上传训练文件
 uploaded_file = st.file_uploader("上传训练文件", type="jsonl")
@@ -25,16 +35,6 @@ if st.button("开始训练"):
         # 将文件保存到本地
         with open("train.jsonl", "wb") as f:
             f.write(uploaded_file.getbuffer())
-
-        # 创建一个文本区域用于显示终端输出
-        terminal_output = st.empty()
-
-        # 定义一个缓冲区，用于保存终端输出
-        output_buffer = []
-
-        # 定义一个函数，将终端输出追加到缓冲区中
-        def append_to_output_buffer(text):
-            output_buffer.append(text)
 
         # 使用 CLI 指令训练模型
         command = [
